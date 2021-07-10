@@ -1,6 +1,8 @@
 package com.game;
 
-public class Image {
+import java.io.Serializable;
+
+public class Image  {
 
     // 图片路径
     private String imgSrc;
