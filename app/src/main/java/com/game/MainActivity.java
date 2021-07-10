@@ -1,8 +1,11 @@
 package com.game;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,6 +26,7 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     // 存放图片
     private List<Image> imgList;
 
+    private ArrayList<String> prepareImages;
+
     // 数据适配器
     private ImageAdapter adapter;
 
@@ -56,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
 
         initView();
         initData();
+
+        btnTo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+            }
+        });
 
         // 初始化图片属性，默认为空
         imgList = new ArrayList<>();
@@ -77,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 设置点击图片的事件
         gvImg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -99,6 +115,15 @@ public class MainActivity extends AppCompatActivity {
                     if (selNum >= 6) {
                         // 如果选择图片大于6个，设置可见
                         btnTo.setVisibility(View.VISIBLE);
+                        btnTo.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                prepareImages();
+                                Intent intent = new Intent(MainActivity.this,GameActivity.class);
+                                intent.putStringArrayListExtra("image",prepareImages);
+                                startActivity(intent);
+                            }
+                        });
                     }
                 }
                 // 刷新界面
@@ -182,5 +207,14 @@ public class MainActivity extends AppCompatActivity {
         pbHor = findViewById(R.id.pb_hor);
         tvPb = findViewById(R.id.tv_pb);
         btnTo = findViewById(R.id.btn_to);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    protected void prepareImages(){
+        prepareImages = new ArrayList<>();
+        List<Image> images = imgList.stream().filter(Image::isSel).collect(Collectors.toList());
+         for(Image i : images) {
+             prepareImages.add(i.getImgSrc());
+         }
     }
 }
